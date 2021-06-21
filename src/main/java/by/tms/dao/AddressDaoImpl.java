@@ -1,6 +1,7 @@
 package by.tms.dao;
 
 import by.tms.entity.Address;
+import by.tms.entity.Tag;
 import by.tms.entity.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -35,5 +36,10 @@ public class AddressDaoImpl {
                 .setParameter("home", home)
                 .uniqueResult();
         return isExistIndicator > 0L;
+    }
+
+    public void delete(Address address) {
+        Session currentSession = sessionFactory.getCurrentSession();
+        currentSession.delete(address);
     }
 }

@@ -87,12 +87,16 @@ public class UserService {
 
     public void delete(long id) {
         if (userDao.contains(id)) {
+            User byId = userDao.findById(id);
+            addressDao.delete(byId.getAddress());
             userDao.delete(id);
         }
     }
 
     public void delete(String username) {
         if (userDao.contains(username)) {
+            User byUsername = userDao.findByUsername(username);
+            addressDao.delete(byUsername.getAddress());
             userDao.delete(username);
         }
     }

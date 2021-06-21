@@ -45,6 +45,11 @@ public class UserDaoImpl {
                 .getSingleResult();
     }
 
+    public User findById(long id) {
+        Session currentSession = sessionFactory.getCurrentSession();
+        return currentSession.get(User.class, id);
+    }
+
     public void updateName(String name, long id) {
         Session currentSession = sessionFactory.getCurrentSession();
         User user = currentSession.get(User.class, id);

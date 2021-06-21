@@ -36,8 +36,8 @@ public class TagDaoImpl {
 
     public boolean contains(String tag) {
         Session currentSession = sessionFactory.getCurrentSession();
-        Long isExistIndicator = (Long) currentSession
-                .createQuery("select count(*) from Tag where tagName like :tag")
+        Long isExistIndicator = currentSession
+                .createQuery("select count(*) from Tag where tagName like :tag", Long.class)
                 .setParameter("tag", tag)
                 .uniqueResult();
         return isExistIndicator > 0L;

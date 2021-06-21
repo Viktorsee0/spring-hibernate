@@ -80,8 +80,8 @@ public class UserDaoImpl {
 
     public boolean contains(Long id) {
         Session currentSession = sessionFactory.getCurrentSession();
-        Long isExistIndicator = (Long) currentSession
-                .createQuery("select count(*) from User where id = :id")
+        Long isExistIndicator = currentSession
+                .createQuery("select count(*) from User where id = :id", Long.class)
                 .setParameter("id", id)
                 .uniqueResult();
         return isExistIndicator > 0L;

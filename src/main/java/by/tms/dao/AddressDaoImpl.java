@@ -30,8 +30,8 @@ public class AddressDaoImpl {
 
     public boolean contains(String street, String home) {
         Session currentSession = sessionFactory.getCurrentSession();
-        Long isExistIndicator = (Long) currentSession
-                .createQuery("select count(*) from Address where street like :street and home like :home")
+        Long isExistIndicator = currentSession
+                .createQuery("select count(*) from Address where street like :street and home like :home", Long.class)
                 .setParameter("street", street)
                 .setParameter("home", home)
                 .uniqueResult();

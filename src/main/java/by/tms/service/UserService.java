@@ -1,14 +1,18 @@
 package by.tms.service;
 
-import by.tms.dao.AddressDao;
+import by.tms.dao.AddressDaoImpl;
+import by.tms.dao.TagDaoImpl;
 import by.tms.dao.UserDaoImpl;
 import by.tms.entity.Address;
+import by.tms.entity.Tag;
 import by.tms.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -18,13 +22,32 @@ public class UserService {
     UserDaoImpl userDao;
 
     @Autowired
-    AddressDao addressDao;
+    AddressDaoImpl addressDao;
+
+    @Autowired
+    TagDaoImpl tagDao;
 
     public void save(User user) {
         if (!userDao.contains(user.getUsername())) {
             checkAddress(user);
             userDao.save(user);
         }
+    }
+
+    public void addTage(String username, Tag tag) {
+        User byUsername = userDao.findByUsername(username);
+        List<Tag> all = tagDao.findAll();
+
+        Optional<Tag> first = all.stream().filter(one -> one.getTagName().equals(tag.getTagName())).findFirst();
+
+        if (first.isPresent()){
+            tag.setId(first.get().getId());
+        }else {
+            tagDao.save(tag);
+        }
+
+        byUsername.addTag(tag);
+        userDao.save(byUsername);
     }
 
     private void checkAddress(User user) {
@@ -37,6 +60,10 @@ public class UserService {
 
     public List<User> findAll() {
         return userDao.findAll();
+    }
+
+    public List<User> findAllByName(String name) {
+        return userDao.findAllByName(name);
     }
 
     public User findByUserName(String username) {
@@ -52,9 +79,21 @@ public class UserService {
         }
     }
 
+    public void updateUser(User user) {
+        if (userDao.contains(user.getUsername())) {
+            userDao.updateUser(user);
+        }
+    }
+
     public void delete(long id) {
         if (userDao.contains(id)) {
             userDao.delete(id);
+        }
+    }
+
+    public void delete(String username) {
+        if (userDao.contains(username)) {
+            userDao.delete(username);
         }
     }
 }

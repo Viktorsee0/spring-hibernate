@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.*;
 
 @Data
 @NoArgsConstructor
@@ -21,4 +22,13 @@ public class User {
 
     @OneToOne
     private Address address;
+    @ManyToMany
+    private List<Tag> tags;
+
+    public void addTag(Tag tag){
+        if (tags == null){
+            tags = new ArrayList<>();
+        }
+        tags.add(tag);
+    }
 }

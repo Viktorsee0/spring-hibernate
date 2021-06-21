@@ -1,6 +1,7 @@
 package by.tms.dao;
 
-import by.tms.entity.Address;
+import java.util.*;
+import by.tms.entity.Tag;
 import by.tms.entity.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -8,31 +9,36 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class AddressDao {
+public class TagDaoImpl {
 
     @Autowired
     SessionFactory sessionFactory;
 
-    public void save(Address address) {
+    public void save(Tag tag) {
         Session currentSession = sessionFactory.getCurrentSession();
-        currentSession.save(address);
+        currentSession.save(tag);
     }
 
-    public Address findByStreetAndHome(String street, String home) {
+    public List<Tag> findAll(){
         Session currentSession = sessionFactory.getCurrentSession();
         return currentSession
-                .createQuery("from Address where street like :street and home like :home", Address.class)
-                .setParameter("street", street)
-                .setParameter("home", home)
+                .createQuery("from Tag ", Tag.class)
+                .getResultList();
+    }
+
+    public Tag findByTagName(String tagName) {
+        Session currentSession = sessionFactory.getCurrentSession();
+        return currentSession
+                .createQuery("from Tag where tagName = :tagName", Tag.class)
+                .setParameter("tagName", tagName)
                 .getSingleResult();
     }
 
-    public boolean contains(String street, String home) {
+    public boolean contains(String tag) {
         Session currentSession = sessionFactory.getCurrentSession();
         Long isExistIndicator = (Long) currentSession
-                .createQuery("select count(*) from Address where street like :street and home like :home")
-                .setParameter("street", street)
-                .setParameter("home", home)
+                .createQuery("select count(*) from Tag where tagName like :tag")
+                .setParameter("tag", tag)
                 .uniqueResult();
         return isExistIndicator > 0L;
     }

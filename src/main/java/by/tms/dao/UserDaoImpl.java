@@ -1,5 +1,6 @@
 package by.tms.dao;
 
+import by.tms.entity.Address;
 import by.tms.entity.User;
 
 import java.util.*;
@@ -27,6 +28,15 @@ public class UserDaoImpl {
                 .getResultList();
     }
 
+
+    public List<User> findAllByName(String name) {
+        Session currentSession = sessionFactory.getCurrentSession();
+        return currentSession
+                .createQuery("from User where name = :name", User.class)
+                .setParameter("name", name)
+                .getResultList();
+    }
+
     public User findByUsername(String username) {
         Session currentSession = sessionFactory.getCurrentSession();
         return currentSession
@@ -41,10 +51,17 @@ public class UserDaoImpl {
         user.setName(name); //-_-
     }
 
-    public void delete(long id) {
+    public void updateUser(User user) {
         Session currentSession = sessionFactory.getCurrentSession();
-        User user = currentSession.get(User.class, id);
-        currentSession.delete(user);
+        User userFromDB = currentSession
+                .createQuery("from User where username = :username", User.class)
+                .setParameter("username", user.getUsername())
+                .getSingleResult();
+        userFromDB.setName(user.getName());
+        userFromDB.setPassword(user.getPassword());
+        Address address = userFromDB.getAddress();
+        address.setStreet(user.getAddress().getStreet());
+        address.setHome(user.getAddress().getHome());
     }
 
     public boolean contains(String username) {
@@ -63,6 +80,20 @@ public class UserDaoImpl {
                 .setParameter("id", id)
                 .uniqueResult();
         return isExistIndicator > 0L;
+    }
+
+    public void delete(long id) {
+        Session currentSession = sessionFactory.getCurrentSession();
+        User user = currentSession.get(User.class, id);
+        currentSession.delete(user);
+    }
+
+    public void delete(String username) {
+        Session currentSession = sessionFactory.getCurrentSession();
+        currentSession
+                .createQuery("delete User where username like :username")
+                .setParameter("username", username)
+                .executeUpdate();
     }
 
 }
